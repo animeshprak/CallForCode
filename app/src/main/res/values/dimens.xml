@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_margin">14dp</dimen>
+    <dimen name="default_margin">8dp</dimen>
+    <dimen name="dimen_18">18dp</dimen>
+    <dimen name="dimen_20">20dp</dimen>
+    <dimen name="dimen_12">12dp</dimen>
+    <dimen name="dimen_14">14dp</dimen>
+    <dimen name="dimen_25">25dp</dimen>
+    <dimen name="dimen_36">36dp</dimen>
+    <dimen name="dimen_4">4dp</dimen>
+    <dimen name="margin_ten">10dp</dimen>
+    <dimen name="margin_fifteen">15dp</dimen>
+    <dimen name="margin_twenty">20dp</dimen>
+    <dimen name="margin_twenty_five">25dp</dimen>
+    <dimen name="margin_forty">40dp</dimen>
+    <dimen name="margin_thirty">30dp</dimen>
+    <dimen name="margin_fifty">50dp</dimen>
+    <dimen name="margin_hundred">100dp</dimen>
+    <dimen name="margin_eighty">80dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_six">6dp</dimen>
+    <dimen name="margin_sixteen">16dp</dimen>
+    <dimen name="margin_twelve">12dp</dimen>
+    <dimen name="margin_xsmall">2dp</dimen>
+
+    <dimen name="dimen_32">32dp</dimen>
+    <dimen name="detail_view_image_height">230dp</dimen>
+    <dimen name="tablet_main_container_size">360dp</dimen>
+
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_14">14sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
+    <dimen name="text_size_32">32sp</dimen>
+
+</resources>
