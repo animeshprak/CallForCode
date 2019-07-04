@@ -8,4 +8,8 @@
     <color name="orange">#ffff8800</color>
     <color name="black">#000000</color>
     <color name="hyperlink">#003366</color>
+    <color name="shadow_black">#313C3F</color>
+    <color name="denied_red">#CA0009</color>
+    <color name="accepted_green">#008000</color>
+    <color name="disabled_color">#B3E0E0E0</color>
 </resources>

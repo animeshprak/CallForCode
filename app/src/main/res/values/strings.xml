@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Call For Code</string>
+    <string name="search_employee">Search employee</string>
+    <string name="internet_issue">Please check your internet connection</string>
+    <string name="some_wrong">Something went wrong, please try again</string>
+    <string name="empty_data_set">Sorry, no data available</string>
+    <string name="login_with_email">Login with User Id</string>
+    <string name="email_username">User Id</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forget password?</string>
+    <string name="log_in">Log In</string>
+    <string name="work_in_progress">This feature is not yet available</string>
+    <string name="logged_in_successfully">You have successfully logged in</string>
 </resources>

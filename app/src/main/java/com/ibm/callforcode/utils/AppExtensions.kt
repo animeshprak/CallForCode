@@ -9,13 +9,13 @@ import android.widget.Toast
 import com.gmail.samehadar.iosdialog.IOSDialog
 import com.ibm.callforcode.R
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 import javax.security.cert.CertificateException
-import okhttp3.logging.HttpLoggingInterceptor
 
 class AppExtensions {}
 
@@ -96,6 +96,7 @@ fun getOkHttpClientBuilder() : OkHttpClient.Builder {
     sslContext.init(null, trustAllCerts, SecureRandom())
     client.sslSocketFactory(sslContext.socketFactory)
         .hostnameVerifier { _, _ -> true }
+
     return client
 }
 
