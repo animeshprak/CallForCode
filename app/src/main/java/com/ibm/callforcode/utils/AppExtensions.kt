@@ -19,7 +19,7 @@ import javax.security.cert.CertificateException
 
 class AppExtensions {}
 
-fun Context.getProgressView() : IOSDialog {
+fun Context.getProgressView(loaderText : String = "Loading...") : IOSDialog {
     val dialog = IOSDialog.Builder(this)
         .setOnCancelListener {
 
@@ -29,7 +29,7 @@ fun Context.getProgressView() : IOSDialog {
         .setMessageColorRes(android.R.color.white)
         // .setTitle(R.string.standard_title)
         .setTitleColorRes(android.R.color.white)
-        .setMessageContent("Loading...")
+        .setMessageContent(loaderText)
         .setCancelable(false)
         .setMessageContentGravity(Gravity.END)
         .build()

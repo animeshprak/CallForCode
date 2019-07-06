@@ -7,6 +7,7 @@ class SessionState private constructor() {
     var isLoggedIn = false
     var userName = ""
     var isAdmin = false
+    var isEmergency = false
 
     companion object {
         var mSessionState : SessionState? = null
@@ -41,6 +42,7 @@ class SessionState private constructor() {
             val prefs = context.getSharedPreferences(AppConstants.PREF_FILE, Context.MODE_PRIVATE)
             this.isLoggedIn = prefs.getBoolean(AppConstants.Companion.PREFERENCES.LOGIN_STATUS.toString(), false)
             this.isAdmin = prefs.getBoolean(AppConstants.Companion.PREFERENCES.IS_ADMIN.toString(), false)
+            this.isEmergency = prefs.getBoolean(AppConstants.Companion.PREFERENCES.EMERGENCY.toString(), false)
             this.userName = prefs.getString(AppConstants.Companion.PREFERENCES.USER_NAME.toString(), "")
         }
     }
@@ -49,6 +51,7 @@ class SessionState private constructor() {
         this.userName = ""
         this.isLoggedIn = false
         this.isAdmin = false
+        this.isEmergency = false
         context?.getSharedPreferences(AppConstants.PREF_FILE, Context.MODE_PRIVATE)?.edit()?.clear()?.commit()
     }
 }

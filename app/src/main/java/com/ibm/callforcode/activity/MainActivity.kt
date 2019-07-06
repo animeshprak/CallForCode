@@ -1,7 +1,9 @@
 package com.ibm.callforcode.activity
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.View
+import com.bumptech.glide.Glide
 import com.ibm.callforcode.R
 import com.ibm.callforcode.settings.SettingsFragment
 import com.ibm.callforcode.utils.SessionState
@@ -11,7 +13,7 @@ import com.sample.dashboard.DashboardDetailFragment
 import com.sample.dashboard.DashboardFragment
 import com.sample.listeners.OnEmployeeListItemClicked
 import com.sample.listeners.TitleChangeListener
-import com.sample.utils.isTablet
+import com.sample.utils.AppConstants
 import com.sample.utils.showToast
 import com.sample.webservice.RetrofitController
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,9 +31,10 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
     override fun setLayoutView() = R.layout.activity_main
 
     override fun initialize(savedInstanceState: Bundle?) {
-        if (!isTablet()) {
+        //if (!isTablet()) {
             setSupportActionBar(toolbar)
-        }
+        //}
+        emergency_button_image_view.visibility = if (SessionState.instance.isAdmin) View.VISIBLE else View.INVISIBLE
         onTitleChange(getString(R.string.app_name))
         setUpTabListeners()
         getCharactersDataFromServer()
@@ -56,7 +59,8 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
                     true
                 }
                 R.id.action_settings -> {
-                    commitFragment(R.id.fragment_container, mSettingsFragment, false)
+                    onTitleChange(getString(R.string.settings))
+                    commitSettingsFragment(R.id.fragment_container, mSettingsFragment)
                     true
                 }
                 else -> {
@@ -76,6 +80,7 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
             commitFragment(R.id.fragment_detail_container, dashboardDetailFragment, false)
         } else {*/
             if (isAnimationRequired) {
+                bottom_navigation_menu.visibility = View.GONE
                 detail_back_image_view.visibility = View.VISIBLE
             }
             onTitleChange(title)
@@ -84,8 +89,9 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
     }
 
     override fun onBackPressed() {
-        if (1 < supportFragmentManager?.backStackEntryCount!!) {
+        if (0 < supportFragmentManager?.backStackEntryCount!!) {
             detail_back_image_view.visibility = View.INVISIBLE
+            bottom_navigation_menu.visibility = View.VISIBLE
             popFragmentFromBackStack()
         } else {
             finish()
@@ -95,6 +101,9 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.detail_back_image_view -> onBackPressed()
+            R.id.emergency_button_image_view -> {
+                showEmergencyAlertDialog()
+            }
         }
     }
 
@@ -130,5 +139,43 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
         } else {
             onEmployeeItemClicked(mRelatedDoc[0], mRelatedDoc[0].empName!!, false)
         }
+    }
+
+    private fun showEmergencyAlertDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("")
+        if (SessionState.instance.isEmergency) {
+            builder.setMessage("STOP EMERGENCY?")
+        } else {
+            builder.setMessage("Are you sure you want to trigger EMERGENCY?")
+        }
+        builder.setPositiveButton("YES") {dialog, which ->
+            dialog.dismiss()
+            SessionState.instance.isEmergency = !SessionState.instance.isEmergency
+            checkForEmergency()
+        }
+        builder.setNegativeButton("No") {dialog, which ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
+    private fun checkForEmergency() {
+        if (SessionState.instance.isEmergency) {
+            Glide.with(this).load(R.raw.emergency_light).into(emergency_button_image_view)
+            this.showToast(R.string.emergency_triggered)
+            SessionState.instance.isEmergency = true
+            SessionState.instance.saveBooleanToPreferences(this, AppConstants.Companion.PREFERENCES.EMERGENCY.toString(), true)
+        } else {
+            emergency_button_image_view.setImageResource(R.drawable.ic_emergency)
+            this.showToast(R.string.emergency_stopped)
+            SessionState.instance.isEmergency = false
+            SessionState.instance.saveBooleanToPreferences(this, AppConstants.Companion.PREFERENCES.EMERGENCY.toString(), false)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkForEmergency()
     }
 }

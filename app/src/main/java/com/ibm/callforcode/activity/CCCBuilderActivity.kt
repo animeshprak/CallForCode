@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import com.gmail.samehadar.iosdialog.IOSDialog
 import com.ibm.callforcode.R
 import com.ibm.callforcode.frgament.CCCBuilderFragment
+import com.ibm.callforcode.settings.SettingsFragment
 import com.sample.utils.AppConstants
 import com.sample.utils.getProgressView
 import com.sample.utils.slideActivityRightToLeft
@@ -72,6 +73,14 @@ abstract class CCCBuilderActivity : AppCompatActivity() {
             if (isAnimationRequired) {
                 fragmentTransaction?.addToBackStack(null)
             }
+            fragmentTransaction?.commit()
+        }
+    }
+
+    fun commitSettingsFragment(container: Int, fragment : SettingsFragment) {
+        if (!isFinishing) {
+            val fragmentTransaction = supportFragmentManager?.beginTransaction()
+            fragmentTransaction?.replace(container, fragment, fragment :: class.java.simpleName)
             fragmentTransaction?.commit()
         }
     }

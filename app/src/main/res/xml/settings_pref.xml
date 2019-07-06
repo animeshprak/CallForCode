@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.preference.PreferenceCategory
+            android:title="Notification">
+        <android.support.v7.preference.SwitchPreferenceCompat
+                android:key="key1"
+                android:title="Allow Notifications"
+                android:summary="Allow notifications from admin"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false"/>
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+                android:key="key1"
+                android:title="Allow Notifications After Logout"
+                android:summary="You will receive notification after log out"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false"/>
+
+        <android.support.v7.preference.EditTextPreference
+                android:key="send_notification"
+                android:title="Send notification to admin"
+                android:summary="Send message to admin"
+                android:dialogMessage=""
+                android:defaultValue="Hi Admin, "
+                app:iconSpaceReserved="false"/>
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+            android:title="Emergency Alarm">
+        <android.support.v7.preference.CheckBoxPreference
+                android:key="key3"
+                android:title="Enable Alarm"
+                android:summary="Enable alarm in emergency"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false"/>
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+            android:title="Location">
+        <android.support.v7.preference.CheckBoxPreference
+                android:key="key4"
+                android:title="Share My Location"
+                android:summary="Allow to share location"
+                android:defaultValue="true"
+                app:iconSpaceReserved="false"/>
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+            android:title="General">
+        <Preference
+                android:key="sign_out"
+                android:selectable="true"
+                android:title="Sign Out"
+                android:summary="Click to sign out"
+                app:iconSpaceReserved="false"/>
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

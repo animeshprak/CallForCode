@@ -15,6 +15,7 @@ class AppConstants {
 
         enum class PREFERENCES private constructor(private val value: String) {
             LOGIN_STATUS("LoginStatus"),
+            EMERGENCY("Emergency"),
             USER_NAME("app_config_details"),
             IS_ADMIN("database_detail");
 

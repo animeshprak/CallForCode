@@ -1,98 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
      xmlns:tools="http://schemas.android.com/tools"
      xmlns:app="http://schemas.android.com/apk/res-auto"
      android:layout_width="match_parent"
-     android:layout_height="match_parent"
-     android:background="@drawable/background_img"
-     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-     tools:context="com.sample.dashboard.DashboardDetailFragment">
+     android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/detail_fragment_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/detail_view_image_height"
-            android:background="@color/black"
-            app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/detail_activity_user_id"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_18"
-            android:fontFamily="@font/font_regular"
-            android:textStyle="bold"
-            android:textColor="@color/orange"
-            android:padding="@dimen/dimen_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_fragment_image_view"
-            app:layout_constraintEnd_toEndOf="parent"/>
+        <android.support.constraint.ConstraintLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@drawable/background_img"
+             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+             tools:context="com.sample.dashboard.DashboardDetailFragment">
 
-    <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/detail_activity_user_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_16"
-            android:fontFamily="@font/font_regular"
-            android:textStyle="bold"
-            android:textColor="@color/shadow_black"
-            android:padding="@dimen/dimen_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_activity_user_id"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/detail_fragment_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/detail_view_image_height"
+                    android:background="@color/black"
+                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-    <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/detail_activity_user_phone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_16"
-            android:fontFamily="@font/font_regular"
-            android:textStyle="bold"
-            android:textColor="@color/shadow_black"
-            android:padding="@dimen/dimen_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_activity_user_name"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/detail_activity_user_id"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_22"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_fragment_image_view"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-    <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/detail_activity_user_emergency_contact"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_16"
-            android:fontFamily="@font/font_regular"
-            android:textStyle="bold"
-            android:textColor="@color/shadow_black"
-            android:padding="@dimen/dimen_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_activity_user_phone"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/detail_activity_user_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_20"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:textColor="@color/shadow_black"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_activity_user_id"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-    <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/detail_activity_user_location"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_16"
-            android:fontFamily="@font/font_regular"
-            android:textStyle="bold"
-            android:textColor="@color/shadow_black"
-            android:padding="@dimen/dimen_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_activity_user_emergency_contact"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/detail_activity_user_phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_20"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:textColor="@color/shadow_black"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_activity_user_name"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-    <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/detail_activity_user_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_16"
-            android:fontFamily="@font/font_regular"
-            android:textStyle="bold"
-            android:textColor="@color/shadow_black"
-            android:padding="@dimen/dimen_4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_activity_user_location"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/detail_activity_user_emergency_contact"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_20"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:textColor="@color/shadow_black"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_activity_user_phone"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-</android.support.constraint.ConstraintLayout>
+            <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/detail_activity_user_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_20"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:textColor="@color/shadow_black"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_activity_user_emergency_contact"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/detail_activity_user_status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_20"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:textColor="@color/shadow_black"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_activity_user_location"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                    android:id="@+id/detail_activity_user_map_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_20"
+                    android:fontFamily="@font/font_regular"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/hyperlink"
+                    android:padding="@dimen/dimen_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/detail_activity_user_status"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            <fragment
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:id="@+id/product_detail_product_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/emp_detail_view_map_height"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:padding="@dimen/default_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/detail_activity_user_map_location" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <ImageView
+            android:id="@+id/emergency_gif_image_view"
+            android:layout_width="@dimen/margin_eighty"
+            android:layout_height="@dimen/margin_eighty"
+            android:layout_marginEnd="@dimen/margin_fifteen"
+            android:layout_gravity="bottom|start"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+</FrameLayout>
