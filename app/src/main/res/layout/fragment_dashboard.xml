@@ -70,4 +70,17 @@
 
     </LinearLayout>
 
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/filter_fab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_filter"
+            android:layout_gravity="bottom|end"
+            app:elevation="@dimen/default_margin"
+            app:pressedTranslationZ="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/margin_fifteen"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="@dimen/margin_fifteen"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
 </android.support.constraint.ConstraintLayout>

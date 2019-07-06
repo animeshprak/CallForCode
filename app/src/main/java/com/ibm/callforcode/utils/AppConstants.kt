@@ -1,7 +1,7 @@
 package com.sample.utils
 
 /**
- * Created by Chaitanya on 06/08/19.
+ * Created by Animesh on 07/02/19.
  */
 class AppConstants {
     companion object {
@@ -10,5 +10,17 @@ class AppConstants {
         const val EMP_LIST_URL = "_all_docs?include_docs=true"
         const val TITLE = "Call For Code"
         const val SPLASH_TIME = 3000L
+        const val PREF_FILE = "callforcodepref"
+        const val ADMIN = "admin"
+
+        enum class PREFERENCES private constructor(private val value: String) {
+            LOGIN_STATUS("LoginStatus"),
+            USER_NAME("app_config_details"),
+            IS_ADMIN("database_detail");
+
+            override fun toString(): String {
+                return this.value
+            }
+        }
     }
 }

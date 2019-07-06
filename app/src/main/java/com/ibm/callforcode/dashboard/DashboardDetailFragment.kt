@@ -48,13 +48,23 @@ class DashboardDetailFragment : CCCBuilderFragment() {
             requestOptions.placeholder(R.drawable.ic_placeholder)
             Glide.with(detail_fragment_image_view).setDefaultRequestOptions(requestOptions)
                 .load(relatedEmployee?.attachments).into(detail_fragment_image_view)
-            detail_activity_overview.text = relatedEmployee?.empName
-            var moreDetailLink = relatedEmployee?.empName
-            detail_activity_link.isClickable = true
-            detail_activity_link.movementMethod = LinkMovementMethod.getInstance()
-            val linkText = "<a href='$moreDetailLink'>Click to get more details </a>"
-            detail_activity_link.text = Html.fromHtml(linkText)
+            detail_activity_user_name.text = relatedEmployee?.empName
+            detail_activity_user_id.text = relatedEmployee?.id
+            detail_activity_user_phone.text = "Phone - ${relatedEmployee?.empPhone}"
+            detail_activity_user_emergency_contact.text = "Emergency contact - ${relatedEmployee?.emergencyContact}"
+            detail_activity_user_status.text = Html.fromHtml(getStatus(relatedEmployee?.empInBuilding!!))
+            detail_activity_user_location.text = "Location - ${relatedEmployee?.seatNumber}, ODC - ${relatedEmployee?.odcNumber}, Floor - ${relatedEmployee?.odcFloor}"
         }
+    }
+
+    private fun getStatus(isEmployeeIn : Boolean) : String {
+        var statusColor = "#CA0009"
+        var statusText = "OUT"
+        if (isEmployeeIn) {
+            statusColor = "#008000"
+            statusText = "IN"
+        }
+        return "<font color=#313C3F>Status</font> - <font color=$statusColor>$statusText</font>"
     }
 
 }

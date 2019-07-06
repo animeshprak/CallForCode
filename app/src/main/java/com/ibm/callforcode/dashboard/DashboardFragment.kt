@@ -10,31 +10,38 @@ import android.text.TextWatcher
 import com.ibm.callforcode.R
 import com.ibm.callforcode.frgament.CCCBuilderFragment
 import com.ibm.callforcode.webservice.data.Doc
-import com.ibm.callforcode.webservice.data.Employees
 import com.sample.listeners.OnEmployeeListItemClicked
 import com.sample.listeners.TitleChangeListener
+import com.sample.utils.AppConstants
 import com.sample.utils.hideKeyboard
 import com.sample.utils.isTablet
 import com.sample.utils.showToast
-import com.sample.webservice.RetrofitController
 import kotlinx.android.synthetic.main.fragment_dashboard.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  * A simple [Fragment] subclass.
  * Represent Dashboard
  * Contains Character names
  */
-class DashboardFragment : CCCBuilderFragment(), TextWatcher, Callback<Employees>
-    , OnEmployeeListItemClicked {
+class DashboardFragment : CCCBuilderFragment(), TextWatcher,
+    OnEmployeeListItemClicked {
     private var mTitleChangeListener : TitleChangeListener? = null
     private var mEmployeeListItemClicked : OnEmployeeListItemClicked? = null
     private var mRelatedDoc = ArrayList<Doc>()
     private var mRelatedDocTempData = ArrayList<Doc>()
     private var mDashboardAdapter : DashboardAdapter? = null
     private var title : String = "Call For Code"
+
+    companion object {
+        @JvmStatic
+        fun newInstance(title: String, relatedEmployeeList : ArrayList<Doc>) =
+            DashboardFragment().apply {
+                arguments = Bundle().apply {
+                    putString(AppConstants.TITLE, title)
+                    putParcelableArrayList(AppConstants.BUNDLE, relatedEmployeeList)
+                }
+            }
+    }
 
     override fun setLayoutView() = R.layout.fragment_dashboard
 
@@ -46,56 +53,28 @@ class DashboardFragment : CCCBuilderFragment(), TextWatcher, Callback<Employees>
         character_name_dashboard_recycler_view.setHasFixedSize(false)
         character_name_dashboard_recycler_view.itemAnimator = DefaultItemAnimator()
         search_character_edit_text.addTextChangedListener(this)
-        initializingKeywordHideListener()
-        if (mRelatedDoc.isNullOrEmpty()) {
-            showProgressView()
-            getCharactersDataFromServer()
+        initializingListener()
+
+        arguments?.let {
+            title = it.getString(AppConstants.TITLE)
+            mRelatedDoc = it.getParcelableArrayList(AppConstants.BUNDLE)
+        }
+
+        mDashboardAdapter = if (!mRelatedDocTempData.isNullOrEmpty()) {
+            DashboardAdapter(mRelatedDocTempData, this)
         } else {
-            mDashboardAdapter = if (!mRelatedDocTempData.isNullOrEmpty()) {
-                DashboardAdapter(mRelatedDocTempData, this)
-            } else {
-                DashboardAdapter(mRelatedDoc, this)
-            }
-            character_name_dashboard_recycler_view.adapter = mDashboardAdapter
-            if (!title.isNullOrEmpty()) {
-                mTitleChangeListener?.onTitleChange(title)
-            }
+            DashboardAdapter(mRelatedDoc, this)
         }
+        character_name_dashboard_recycler_view.adapter = mDashboardAdapter
+        if (!title.isNullOrEmpty()) {
+            mTitleChangeListener?.onTitleChange(title)
+        }
+
     }
 
-    private fun initializingKeywordHideListener() {
+    private fun initializingListener() {
         search_imageView.setOnClickListener { this.activity?.hideKeyboard() }
-    }
-
-    private fun getCharactersDataFromServer() {
-        RetrofitController.getCharactersData(this)
-    }
-
-    override fun onFailure(call: Call<Employees>?, t: Throwable?) {
-        hideProgressView()
-        this.context?.showToast(R.string.internet_issue)
-    }
-
-    override fun onResponse(call: Call<Employees>?, response: Response<Employees>?) {
-        if (isAdded && !isHidden) {
-            if (response != null && response.isSuccessful && character_name_dashboard_recycler_view != null) {
-                val data : Employees? = response.body()
-                if (!data?.getRows().isNullOrEmpty()) {
-                    data?.getRows()?.forEach { it.apply { mRelatedDoc.add(doc!!) } }
-                    mDashboardAdapter = DashboardAdapter(mRelatedDoc, this)
-                    character_name_dashboard_recycler_view.adapter = mDashboardAdapter
-                    /*if (!data?.heading.isNullOrEmpty()) {
-                        title = data?.heading!!
-                        mTitleChangeListener?.onTitleChange(title)
-                    }*/
-                } else {
-                    this.context?.showToast(R.string.empty_data_set)
-                }
-            } else {
-                this.context?.showToast(R.string.some_wrong)
-            }
-            hideProgressView()
-        }
+        filter_fab_button.setOnClickListener {  }
     }
 
     override fun afterTextChanged(charSequence: Editable?) {
@@ -123,10 +102,10 @@ class DashboardFragment : CCCBuilderFragment(), TextWatcher, Callback<Employees>
         }
     }
 
-    override fun onEmployeeItemClicked(relatedEmployee: Doc, title : String) {
+    override fun onEmployeeItemClicked(relatedEmployee: Doc, title : String, isAnimationRequired: Boolean) {
         if (!this.context?.isTablet()!!) {
             this.activity?.hideKeyboard()
         }
-        mEmployeeListItemClicked?.onEmployeeItemClicked(relatedEmployee, title)
+        mEmployeeListItemClicked?.onEmployeeItemClicked(relatedEmployee, title, isAnimationRequired)
     }
 }

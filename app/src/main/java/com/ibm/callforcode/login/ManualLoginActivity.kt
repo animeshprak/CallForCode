@@ -9,6 +9,8 @@ import android.view.View
 import com.ibm.callforcode.R
 import com.ibm.callforcode.activity.CCCBuilderActivity
 import com.ibm.callforcode.activity.MainActivity
+import com.ibm.callforcode.utils.SessionState
+import com.sample.utils.AppConstants
 import com.sample.utils.hideKeyboard
 import com.sample.utils.showToast
 import kotlinx.android.synthetic.main.activity_manual_login.*
@@ -70,6 +72,15 @@ class ManualLoginActivity : CCCBuilderActivity(), View.OnFocusChangeListener , T
         var email = login_email_id_edit_text.text.toString()
         var username = login_email_id_edit_text.text.toString()
         var password = login_password_edit_text.text.toString()
+        SessionState.instance.isAdmin = username.toLowerCase().equals(AppConstants.ADMIN)
+        SessionState.instance.isLoggedIn = true
+        SessionState.instance.userName = username
+        SessionState.instance.saveBooleanToPreferences(this@ManualLoginActivity,
+            AppConstants.Companion.PREFERENCES.LOGIN_STATUS.toString(), true)
+        SessionState.instance.saveBooleanToPreferences(this@ManualLoginActivity,
+            AppConstants.Companion.PREFERENCES.IS_ADMIN.toString(), SessionState.instance.isAdmin)
+        SessionState.instance.saveValuesToPreferences(this@ManualLoginActivity,
+            AppConstants.Companion.PREFERENCES.USER_NAME.toString(), username)
         moveToDashboard()
     }
 

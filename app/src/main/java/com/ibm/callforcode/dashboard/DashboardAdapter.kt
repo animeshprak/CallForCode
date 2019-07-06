@@ -35,7 +35,7 @@ class DashboardAdapter(
         }
 
         holder.itemView.setOnClickListener() {
-            mOnEmployeeListItemClicked?.onEmployeeItemClicked(employeeData, holder.employeeName?.text.toString())
+            mOnEmployeeListItemClicked?.onEmployeeItemClicked(employeeData, holder.employeeName?.text.toString(), true)
         }
     }
 
@@ -44,7 +44,7 @@ class DashboardAdapter(
         notifyDataSetChanged()
     }
 
-    fun getStatus(isEmployeeIn : Boolean) : String {
+    private fun getStatus(isEmployeeIn : Boolean) : String {
         var statusColor = "#CA0009"
         var statusText = "OUT"
         if (isEmployeeIn) {
