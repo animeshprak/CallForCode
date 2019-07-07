@@ -4,11 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import android.view.View
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -65,8 +67,16 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback, Refres
 
         setData()
         val mapFragment = childFragmentManager.findFragmentById(R.id.product_detail_product_map) as SupportMapFragment?
-
         mapFragment!!.getMapAsync(this)
+        monitorEmergency()
+    }
+
+    private fun monitorEmergency() {
+        Handler().postDelayed( {
+            this.activity?.runOnUiThread() {
+                checkForEmergency()
+            }
+        }, AppConstants.SPLASH_TIME)
     }
 
     private fun setData() {
@@ -76,7 +86,7 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback, Refres
             }
             val requestOptions = RequestOptions()
             requestOptions.placeholder(R.drawable.ic_placeholder)
-            Glide.with(detail_fragment_image_view).setDefaultRequestOptions(requestOptions)
+            Glide.with(detail_fragment_image_view.context).setDefaultRequestOptions(requestOptions)
                 .load(relatedEmployee?.image).into(detail_fragment_image_view)
             detail_activity_user_name.text = relatedEmployee?.empName
             detail_activity_user_id.text = relatedEmployee?.id
@@ -165,13 +175,15 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback, Refres
         mMap?.animateCamera(CameraUpdateFactory.zoomTo(16.0F))
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun checkForEmergency() {
         if (SessionState.instance.isEmergency) {
+            emergency_gif_image_view.visibility = View.VISIBLE
             Glide.with(this).load(R.raw.emergency_light).into(emergency_gif_image_view)
+        } else {
+            emergency_gif_image_view.visibility = View.GONE
         }
+        monitorEmergency()
     }
-
     override fun refreshData(doc: Doc) {
         relatedEmployee = doc
         setData()

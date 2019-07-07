@@ -1,6 +1,7 @@
 package com.ibm.callforcode.activity
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AlertDialog
 import android.view.View
 import com.bumptech.glide.Glide
@@ -11,6 +12,8 @@ import com.ibm.callforcode.settings.SettingsFragment
 import com.ibm.callforcode.utils.SessionState
 import com.ibm.callforcode.webservice.data.Doc
 import com.ibm.callforcode.webservice.data.Employees
+import com.ibm.callforcode.webservice.emergency.EmergencyResponse
+import com.ibm.callforcode.webservice.updatestatus.UpdatedStatusResponse
 import com.sample.dashboard.DashboardDetailFragment
 import com.sample.dashboard.DashboardFragment
 import com.sample.listeners.OnEmployeeListItemClicked
@@ -33,6 +36,7 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
     private var mSettingsFragment = SettingsFragment()
     private var mDashboardDetailFragment : DashboardDetailFragment? = null
     private var mDashboardFragment : DashboardFragment? = null
+    private var mEmergencyResponse : EmergencyResponse? = null
 
     override fun setLayoutView() = R.layout.activity_main
 
@@ -44,7 +48,7 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
         onTitleChange(getString(com.ibm.callforcode.R.string.app_name))
         setUpTabListeners()
         getEmployeesDataFromServer(true)
-        scheduleRefreshData()
+        //scheduleRefreshData()
     }
 
     private fun scheduleRefreshData() {
@@ -52,6 +56,7 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
             override fun run() {
                 this@MainActivity.runOnUiThread() {
                      getEmployeesDataFromServer(false)
+                    getEmergencyStatus()
                 }
             }
         }, 1000L, 10000L)
@@ -161,6 +166,11 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
                 this.showToast(R.string.some_wrong)
             }
             hideProgressView()
+            Handler().postDelayed( {
+                this@MainActivity.runOnUiThread() {
+                    getEmergencyStatus()
+                }
+            }, AppConstants.SPLASH_TIME)
     }
 
     private fun launchDashboard() {
@@ -187,8 +197,7 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
         }
         builder.setPositiveButton("YES") {dialog, which ->
             dialog.dismiss()
-            SessionState.instance.isEmergency = !SessionState.instance.isEmergency
-            checkForEmergency()
+            updateEmergencyStatus()
         }
         builder.setNegativeButton("No") {dialog, which ->
             dialog.dismiss()
@@ -196,7 +205,60 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
         builder.create().show()
     }
 
-    private fun checkForEmergency(isToastRequired: Boolean = true) {
+    private fun updateEmergencyStatus() {
+        if (mEmergencyResponse != null) {
+            showProgressView()
+            mEmergencyResponse!!.setIsEmergencyTrigged(!(mEmergencyResponse!!.getIsEmergencyTrigged())!!)
+            RetrofitController.setEmergencyStatusData(mEmergencyResponse!!, object : Callback<UpdatedStatusResponse> {
+                override fun onFailure(call: Call<UpdatedStatusResponse>, t: Throwable) {
+                    hideProgressView()
+                    this@MainActivity.showToast(R.string.internet_issue)
+                }
+
+                override fun onResponse(call: Call<UpdatedStatusResponse>, response: Response<UpdatedStatusResponse>) {
+                    hideProgressView()
+                    if (response != null && response.isSuccessful) {
+                        val updatedStatusResponse = response.body()
+                        mEmergencyResponse?.setRev(updatedStatusResponse?.getRev()!!)
+                        SessionState.instance.isEmergency = mEmergencyResponse?.getIsEmergencyTrigged()!!
+                        if (SessionState.instance.isEmergency) {
+                            this@MainActivity.showToast(R.string.emergency_triggered)
+                        } else {
+                            this@MainActivity.showToast(R.string.emergency_stopped)
+                        }
+                        checkForEmergency()
+                    }
+                }
+
+            })
+        }
+    }
+
+    private fun getEmergencyStatus() {
+            RetrofitController.getEmergencyStatusData(object : Callback<EmergencyResponse> {
+                override fun onFailure(call: Call<EmergencyResponse>, t: Throwable) {
+                    hideProgressView()
+                    this@MainActivity.showToast(R.string.internet_issue)
+                }
+
+                override fun onResponse(call: Call<EmergencyResponse>, response: Response<EmergencyResponse>) {
+                    hideProgressView()
+                    if (response != null && response.isSuccessful) {
+                        mEmergencyResponse = response.body()
+                        SessionState.instance.isEmergency = mEmergencyResponse?.getIsEmergencyTrigged()!!
+                        checkForEmergency()
+                    }
+                    Handler().postDelayed( {
+                        this@MainActivity.runOnUiThread() {
+                            getEmployeesDataFromServer(false)
+                        }
+                    }, AppConstants.SPLASH_TIME)
+                }
+
+            })
+    }
+
+    private fun checkForEmergency(isToastRequired: Boolean = false) {
         if (SessionState.instance.isEmergency) {
             Glide.with(this).load(R.raw.emergency_light).into(emergency_button_image_view)
             if (isToastRequired) this.showToast(R.string.emergency_triggered)
@@ -208,10 +270,5 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
             SessionState.instance.isEmergency = false
             SessionState.instance.saveBooleanToPreferences(this, AppConstants.Companion.PREFERENCES.EMERGENCY.toString(), false)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkForEmergency(false)
     }
 }
