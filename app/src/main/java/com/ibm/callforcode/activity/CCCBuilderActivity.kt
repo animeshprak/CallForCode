@@ -4,19 +4,25 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.gmail.samehadar.iosdialog.IOSDialog
 import com.ibm.callforcode.R
 import com.ibm.callforcode.frgament.CCCBuilderFragment
+import com.ibm.callforcode.settings.SettingsFragment
 import com.sample.utils.AppConstants
+import com.sample.utils.getProgressView
 import com.sample.utils.slideActivityRightToLeft
 
 /**
  * Created by Animesh on 06/29/19.
  */
 abstract class CCCBuilderActivity : AppCompatActivity() {
+    private var iOSDialog : IOSDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         slideActivityRightToLeft()
         setContentView(setLayoutView())
+        iOSDialog = this.getProgressView()
         initialize(savedInstanceState)
     }
 
@@ -64,15 +70,31 @@ abstract class CCCBuilderActivity : AppCompatActivity() {
                     R.anim.left_to_right_start, R.anim.right_to_left_end)
             }
             fragmentTransaction?.replace(container, fragment, fragment :: class.java.simpleName)
-            //if (!resources.getBoolean(R.bool.isTablet)) {
+            if (isAnimationRequired) {
                 fragmentTransaction?.addToBackStack(null)
-           // }
+            }
+            fragmentTransaction?.commit()
+        }
+    }
+
+    fun commitSettingsFragment(container: Int, fragment : SettingsFragment) {
+        if (!isFinishing) {
+            val fragmentTransaction = supportFragmentManager?.beginTransaction()
+            fragmentTransaction?.replace(container, fragment, fragment :: class.java.simpleName)
             fragmentTransaction?.commit()
         }
     }
 
     fun popFragmentFromBackStack() {
         supportFragmentManager?.popBackStackImmediate()
+    }
+
+    fun showProgressView() {
+        iOSDialog?.show()
+    }
+
+    fun hideProgressView() {
+        iOSDialog?.dismiss()
     }
 
 }
