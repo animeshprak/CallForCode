@@ -16,18 +16,21 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    /*productFlavors {
+    productFlavors {
+        managestatusapp {
+            applicationIdSuffix ".managestatusapp"
+            versionNameSuffix "-managestatusapp"
+            buildConfigField "String", "DATA_API_PATH", "\"_all_docs?include_docs=true\""
+            buildConfigField "String", "LEVEL", "\"full_access\""
+        }
         userapp {
             applicationIdSuffix ".userapp"
             versionNameSuffix "-userapp"
             buildConfigField "String", "DATA_API_PATH", "\"_all_docs?include_docs=true\""
-        }
-        adminapp {
-            applicationIdSuffix ".adminapp"
-            versionNameSuffix "-adminapp"
             buildConfigField "String", "DATA_API_PATH", "\"_all_docs?include_docs=true\""
+            buildConfigField "String", "LEVEL", "\"admin_and_user\""
         }
-    }*/
+    }
 
     buildTypes {
         release {
@@ -57,6 +60,8 @@ dependencies {
     implementation 'com.android.support:preference-v7:28.0.0'
     implementation "com.android.support:animated-vector-drawable:28.0.0"
     implementation "com.android.support:exifinterface:28.0.0"
+    implementation "com.android.support:support-media-compat:28.0.0"
+    implementation "com.android.support:support-v4:28.0.0"
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation "com.google.android.gms:play-services-location:16.0.0"
     implementation group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version:'latest.release'

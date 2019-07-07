@@ -5,6 +5,8 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import com.bumptech.glide.Glide
 import com.ibm.callforcode.R
+import com.ibm.callforcode.listeners.RefreshAllEmployeeData
+import com.ibm.callforcode.listeners.RefreshEmployeeData
 import com.ibm.callforcode.settings.SettingsFragment
 import com.ibm.callforcode.utils.SessionState
 import com.ibm.callforcode.webservice.data.Doc
@@ -21,12 +23,16 @@ import kotlinx.android.synthetic.main.content_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListItemClicked,
     View.OnClickListener, Callback<Employees> {
 
     private var mRelatedDoc = ArrayList<Doc>()
     private var mSettingsFragment = SettingsFragment()
+    private var mDashboardDetailFragment : DashboardDetailFragment? = null
+    private var mDashboardFragment : DashboardFragment? = null
 
     override fun setLayoutView() = R.layout.activity_main
 
@@ -35,9 +41,20 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
             setSupportActionBar(toolbar)
         //}
         emergency_button_image_view.visibility = if (SessionState.instance.isAdmin) View.VISIBLE else View.INVISIBLE
-        onTitleChange(getString(R.string.app_name))
+        onTitleChange(getString(com.ibm.callforcode.R.string.app_name))
         setUpTabListeners()
-        getCharactersDataFromServer()
+        getEmployeesDataFromServer(true)
+        scheduleRefreshData()
+    }
+
+    private fun scheduleRefreshData() {
+        Timer().scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                this@MainActivity.runOnUiThread() {
+                     getEmployeesDataFromServer(false)
+                }
+            }
+        }, 1000L, 10000L)
     }
 
     override fun onTitleChange(title: String) {
@@ -69,13 +86,13 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
             }}
     }
 
-    private fun getCharactersDataFromServer() {
-        showProgressView()
-        RetrofitController.getCharactersData(this)
+    private fun getEmployeesDataFromServer(isProgressRequired : Boolean) {
+        if (isProgressRequired) showProgressView()
+        RetrofitController.getEmployeesData(this)
     }
 
     override fun onEmployeeItemClicked(relatedTopic: Doc, title: String, isAnimationRequired: Boolean) {
-        val dashboardDetailFragment = DashboardDetailFragment.newInstance(title, relatedTopic)
+        mDashboardDetailFragment = DashboardDetailFragment.newInstance(title, relatedTopic)
         /*if (isTablet()) {
             commitFragment(R.id.fragment_detail_container, dashboardDetailFragment, false)
         } else {*/
@@ -84,7 +101,7 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
                 detail_back_image_view.visibility = View.VISIBLE
             }
             onTitleChange(title)
-            commitFragment(R.id.fragment_container, dashboardDetailFragment, isAnimationRequired)
+            commitFragment(R.id.fragment_container, mDashboardDetailFragment!!, isAnimationRequired)
        // }
     }
 
@@ -116,9 +133,22 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
             if (response != null && response.isSuccessful) {
                 val data : Employees? = response.body()
                 if (!data?.getRows().isNullOrEmpty()) {
+                    mRelatedDoc.clear()
                     data?.getRows()?.forEach { it.apply { mRelatedDoc.add(doc!!) } }
-                    if (!mRelatedDoc.isNullOrEmpty()) {
+                    if (!mRelatedDoc.isNullOrEmpty() && mDashboardFragment == null && mDashboardDetailFragment == null) {
                         launchDashboard()
+                    } else {
+                        if (mDashboardFragment != null && mDashboardFragment!!.isAdded && !mDashboardFragment!!.isHidden) {
+                            var mOnRefreshDataRequired : RefreshAllEmployeeData = mDashboardFragment as RefreshAllEmployeeData
+                            mOnRefreshDataRequired?.refreshData(mRelatedDoc)
+                        } else if (mDashboardDetailFragment != null && mDashboardDetailFragment!!.isAdded && !mDashboardDetailFragment!!.isHidden) {
+                            var mOnRefreshDataRequired : RefreshEmployeeData = mDashboardDetailFragment as RefreshEmployeeData
+                            var employeeDoc : Doc? = null
+                            mRelatedDoc.forEach { if (it.id.equals(SessionState.instance.userName)) {employeeDoc = it} }
+                            if (employeeDoc != null) {
+                                mOnRefreshDataRequired?.refreshData(employeeDoc!!)
+                            }
+                        }
                     }
                     /*if (!data?.heading.isNullOrEmpty()) {
                         title = data?.heading!!
@@ -135,9 +165,15 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
 
     private fun launchDashboard() {
         if (SessionState.instance.isAdmin) {
-            commitFragment(R.id.fragment_container, DashboardFragment.newInstance(getString(R.string.app_name), mRelatedDoc), false)
+            mDashboardFragment = DashboardFragment.newInstance(getString(R.string.app_name), mRelatedDoc)
+            commitFragment(R.id.fragment_container, mDashboardFragment!!, false)
         } else {
-            onEmployeeItemClicked(mRelatedDoc[0], mRelatedDoc[0].empName!!, false)
+            var employeeDoc : Doc? = null
+            mRelatedDoc.forEach { if (it.id.equals(SessionState.instance.userName)) {employeeDoc = it} }
+            if (employeeDoc == null) {
+                employeeDoc = mRelatedDoc[0]
+            }
+            onEmployeeItemClicked(employeeDoc!!, employeeDoc!!.empName!!, false)
         }
     }
 
@@ -160,15 +196,15 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
         builder.create().show()
     }
 
-    private fun checkForEmergency() {
+    private fun checkForEmergency(isToastRequired: Boolean = true) {
         if (SessionState.instance.isEmergency) {
             Glide.with(this).load(R.raw.emergency_light).into(emergency_button_image_view)
-            this.showToast(R.string.emergency_triggered)
+            if (isToastRequired) this.showToast(R.string.emergency_triggered)
             SessionState.instance.isEmergency = true
             SessionState.instance.saveBooleanToPreferences(this, AppConstants.Companion.PREFERENCES.EMERGENCY.toString(), true)
         } else {
             emergency_button_image_view.setImageResource(R.drawable.ic_emergency)
-            this.showToast(R.string.emergency_stopped)
+            if (isToastRequired) this.showToast(R.string.emergency_stopped)
             SessionState.instance.isEmergency = false
             SessionState.instance.saveBooleanToPreferences(this, AppConstants.Companion.PREFERENCES.EMERGENCY.toString(), false)
         }
@@ -176,6 +212,6 @@ class MainActivity : CCCBuilderActivity() , TitleChangeListener, OnEmployeeListI
 
     override fun onResume() {
         super.onResume()
-        checkForEmergency()
+        checkForEmergency(false)
     }
 }

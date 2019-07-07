@@ -14,15 +14,25 @@ import android.text.TextWatcher
 import android.view.WindowManager
 import com.ibm.callforcode.R
 import com.ibm.callforcode.frgament.CCCBuilderFragment
+import com.ibm.callforcode.listeners.OnEmployeeChangedTheStatus
+import com.ibm.callforcode.listeners.RefreshAllEmployeeData
 import com.ibm.callforcode.utils.CustomAlertDialog
+import com.ibm.callforcode.utils.SessionState
 import com.ibm.callforcode.webservice.data.Doc
+import com.ibm.callforcode.webservice.data.Employees
+import com.ibm.callforcode.webservice.updatestatus.UpdatedStatusResponse
 import com.sample.listeners.OnEmployeeListItemClicked
 import com.sample.listeners.TitleChangeListener
 import com.sample.utils.AppConstants
 import com.sample.utils.hideKeyboard
 import com.sample.utils.isTablet
 import com.sample.utils.showToast
+import com.sample.webservice.RetrofitController
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 
 /**
  * A simple [Fragment] subclass.
@@ -30,7 +40,9 @@ import kotlinx.android.synthetic.main.fragment_dashboard.*
  * Contains Character names
  */
 class DashboardFragment : CCCBuilderFragment(), TextWatcher,
-    OnEmployeeListItemClicked {
+    OnEmployeeListItemClicked, OnEmployeeChangedTheStatus, Callback<UpdatedStatusResponse>,
+    RefreshAllEmployeeData {
+
     private var mTitleChangeListener : TitleChangeListener? = null
     private var mEmployeeListItemClicked : OnEmployeeListItemClicked? = null
     private var mRelatedDoc = ArrayList<Doc>()
@@ -68,9 +80,9 @@ class DashboardFragment : CCCBuilderFragment(), TextWatcher,
         }
 
         mDashboardAdapter = if (!mRelatedDocTempData.isNullOrEmpty()) {
-            DashboardAdapter(mRelatedDocTempData, this)
+            DashboardAdapter(mRelatedDocTempData, this, this)
         } else {
-            DashboardAdapter(mRelatedDoc, this)
+            DashboardAdapter(mRelatedDoc, this, this)
         }
         character_name_dashboard_recycler_view.adapter = mDashboardAdapter
         if (!title.isNullOrEmpty()) {
@@ -201,5 +213,37 @@ class DashboardFragment : CCCBuilderFragment(), TextWatcher,
                 this.context?.showToast(R.string.empty_data_set)
             }
         }
+    }
+
+    override fun onStatusChanged(doc: Doc) {
+        RetrofitController.setEmployeesStatus(doc,this)
+    }
+
+    override fun onFailure(call: Call<UpdatedStatusResponse>, t: Throwable) {
+        hideProgressView()
+        this.context?.showToast(R.string.internet_issue)
+    }
+
+    override fun onResponse(call: Call<UpdatedStatusResponse>, response: Response<UpdatedStatusResponse>) {
+        if (isAdded && !isHidden) {
+            if (response != null && response.isSuccessful && response.body() != null) {
+                var updatedStatusResponse : UpdatedStatusResponse = response.body()!!
+                if (mRelatedDocTempData.isNullOrEmpty()) {
+                    mRelatedDoc.forEach { if (it.id.equals(updatedStatusResponse.getId())) {it.rev = updatedStatusResponse.getRev()} }
+                    mDashboardAdapter?.updateDataSet(mRelatedDoc)
+                } else {
+                    mRelatedDocTempData.forEach { if (it.id.equals(updatedStatusResponse.getId())) {it.rev = updatedStatusResponse.getRev()} }
+                    mDashboardAdapter?.updateDataSet(mRelatedDocTempData)
+                }
+            } else {
+                this.context?.showToast(R.string.some_wrong)
+            }
+            hideProgressView()
+        }
+    }
+
+    override fun refreshData(docList: ArrayList<Doc>) {
+        mRelatedDoc = docList
+        mDashboardAdapter?.updateDataSet(mRelatedDoc)
     }
 }

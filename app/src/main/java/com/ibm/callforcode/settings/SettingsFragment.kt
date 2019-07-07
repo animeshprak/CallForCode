@@ -6,17 +6,18 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
+import com.gmail.samehadar.iosdialog.IOSDialog
 import com.ibm.callforcode.R
-import com.ibm.callforcode.activity.MainActivity
 import com.ibm.callforcode.login.ManualLoginActivity
 import com.ibm.callforcode.utils.SessionState
 import com.sample.utils.getProgressView
-import com.sample.utils.showToast
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    var iosDialog : IOSDialog? = null
+
     override fun onCreatePreferences(p0: Bundle?, p1: String?) {
         addPreferencesFromResource(R.xml.settings_pref)
-
+        iosDialog = this.context?.getProgressView("Signing out...")
         if (SessionState.instance.isAdmin) {
             val sendNotificationPref = findPreference("send_notification")
             sendNotificationPref.title = "Send Notification"
@@ -24,7 +25,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("sign_out").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            this.context?.getProgressView("Signing out...")?.show()
             showLogoutAlertDialog()
             true
         }
@@ -44,12 +44,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         builder.setTitle("")
         builder.setMessage("Are you sure you want to logout?")
         builder.setPositiveButton("YES") {dialog, which ->
+            iosDialog?.show()
             dialog.dismiss()
             SessionState.instance.clearSession(this.context)
             startActivity(ManualLoginActivity::class.java, true)
             this.activity?.finish()
         }
         builder.setNegativeButton("No") {dialog, which ->
+            iosDialog?.dismiss()
             dialog.dismiss()
         }
         builder.create().show()

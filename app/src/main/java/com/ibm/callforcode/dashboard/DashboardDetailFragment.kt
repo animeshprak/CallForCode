@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.ibm.callforcode.R
 import com.ibm.callforcode.frgament.CCCBuilderFragment
+import com.ibm.callforcode.listeners.RefreshEmployeeData
 import com.ibm.callforcode.utils.SessionState
 import com.ibm.callforcode.webservice.data.Doc
 import com.sample.utils.AppConstants
@@ -32,7 +33,8 @@ import kotlinx.android.synthetic.main.fragment_dashboard_detail.*
  * A simple [Fragment] subclass.
  * To show Character details
  */
-class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback {
+class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback, RefreshEmployeeData {
+
     private var relatedEmployee : Doc? = null
     private var title : String = ""
     private var mMap: GoogleMap? = null
@@ -61,6 +63,13 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback {
             relatedEmployee = it.getParcelable(AppConstants.BUNDLE)
         }
 
+        setData()
+        val mapFragment = childFragmentManager.findFragmentById(R.id.product_detail_product_map) as SupportMapFragment?
+
+        mapFragment!!.getMapAsync(this)
+    }
+
+    private fun setData() {
         if (relatedEmployee != null) {
             if (this.context?.isTablet()!! && !title.isNullOrEmpty()) {
                 //detail_title_text_view.text = title
@@ -68,7 +77,7 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback {
             val requestOptions = RequestOptions()
             requestOptions.placeholder(R.drawable.ic_placeholder)
             Glide.with(detail_fragment_image_view).setDefaultRequestOptions(requestOptions)
-                .load(relatedEmployee?.attachments).into(detail_fragment_image_view)
+                .load(relatedEmployee?.image).into(detail_fragment_image_view)
             detail_activity_user_name.text = relatedEmployee?.empName
             detail_activity_user_id.text = relatedEmployee?.id
             detail_activity_user_phone.text = "Phone - ${relatedEmployee?.empPhone}"
@@ -77,10 +86,6 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback {
             detail_activity_user_location.text = "Location - ${relatedEmployee?.seatNumber}, ODC - ${relatedEmployee?.odcNumber}, Floor - ${relatedEmployee?.odcFloor}"
             detail_activity_user_map_location.text = "Last Shared Location On Map"
         }
-
-        val mapFragment = childFragmentManager.findFragmentById(R.id.product_detail_product_map) as SupportMapFragment?
-
-        mapFragment!!.getMapAsync(this)
     }
 
     private fun getStatus(isEmployeeIn : Boolean) : String {
@@ -154,9 +159,10 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback {
     private fun addMarkerToMap() {
         var latLng = LatLng(relatedEmployee?.empLatestLatitude!!.toDouble(),
             relatedEmployee?.empLatestLogitude!!.toDouble())
-        mMap?.addMarker(MarkerOptions().position(latLng).title(relatedEmployee?.empName))
+        var marker = mMap?.addMarker(MarkerOptions().position(latLng).title(relatedEmployee?.empName))
+        marker?.showInfoWindow()
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-        mMap?.animateCamera(CameraUpdateFactory.zoomTo(17.0F))
+        mMap?.animateCamera(CameraUpdateFactory.zoomTo(16.0F))
     }
 
     override fun onResume() {
@@ -164,5 +170,10 @@ class DashboardDetailFragment : CCCBuilderFragment(), OnMapReadyCallback {
         if (SessionState.instance.isEmergency) {
             Glide.with(this).load(R.raw.emergency_light).into(emergency_gif_image_view)
         }
+    }
+
+    override fun refreshData(doc: Doc) {
+        relatedEmployee = doc
+        setData()
     }
 }

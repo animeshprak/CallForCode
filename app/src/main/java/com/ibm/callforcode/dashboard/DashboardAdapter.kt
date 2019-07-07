@@ -5,14 +5,18 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import com.ibm.callforcode.BuildConfig
 import com.ibm.callforcode.R
+import com.ibm.callforcode.listeners.OnEmployeeChangedTheStatus
 import com.ibm.callforcode.webservice.data.Doc
 import com.sample.listeners.OnEmployeeListItemClicked
 
 class DashboardAdapter(
     private var mEmployeeDataList: List<Doc>,
-    private val mOnEmployeeListItemClicked: OnEmployeeListItemClicked) : RecyclerView.Adapter<DashboardAdapter.CharacterViewHolder>() {
+    private val mOnEmployeeListItemClicked: OnEmployeeListItemClicked, private val mOnEmployeeStatusChanged: OnEmployeeChangedTheStatus)
+    : RecyclerView.Adapter<DashboardAdapter.CharacterViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): CharacterViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.employees_list_adapter, parent, false)
@@ -28,6 +32,17 @@ class DashboardAdapter(
             holder.employeeId?.text = employeeData.id
             holder.employeeStatus?.text = Html.fromHtml(getStatus(employeeData.empInBuilding!!))
             holder.employeeDescription?.text = "Location - ${employeeData.seatNumber}, ODC - ${employeeData.odcNumber}, Floor - ${employeeData.odcFloor}"
+
+            if (BuildConfig.LEVEL.equals("full_access")) {
+                holder.employeeStatusChangerButton?.visibility = View.VISIBLE
+                holder.employeeStatusChangerButton?.setOnClickListener {
+                    employeeData.empInBuilding = !employeeData.empInBuilding!!
+                    mOnEmployeeStatusChanged?.onStatusChanged(employeeData)
+                    notifyDataSetChanged()
+                }
+            } else {
+                holder.employeeStatusChangerButton?.visibility = View.GONE
+            }
         }
 
         if (holder.employeeName?.context?.resources?.getBoolean(R.bool.isTablet)!! && position == 0) {
@@ -60,11 +75,13 @@ class DashboardAdapter(
         var employeeId: TextView? = null
         var employeeStatus : TextView? = null
         var employeeDescription : TextView? = null
+        var employeeStatusChangerButton : Button? = null
         init {
             employeeName = itemView.findViewById(R.id.employee_name)
             employeeId = itemView.findViewById(R.id.employee_id)
             employeeStatus = itemView.findViewById(R.id.employee_status)
             employeeDescription = itemView.findViewById(R.id.employee_description)
+            employeeStatusChangerButton = itemView.findViewById(R.id.employee_status_changer_button)
         }
     }
 }

@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import org.json.JSONObject
 
 class Doc() : Parcelable {
 
@@ -62,9 +61,9 @@ class Doc() : Parcelable {
     @SerializedName("emergency_contact")
     @Expose
     var emergencyContact: String? = null
-    @SerializedName("_attachments")
+    @SerializedName("image")
     @Expose
-    var attachments: JSONObject? = null
+    var image: String? = null
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
@@ -85,6 +84,7 @@ class Doc() : Parcelable {
         empLatestLogitude = parcel.readString()
         empPhone = parcel.readString()
         emergencyContact = parcel.readString()
+        image = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -106,6 +106,7 @@ class Doc() : Parcelable {
         parcel.writeString(empLatestLogitude)
         parcel.writeString(empPhone)
         parcel.writeString(emergencyContact)
+        parcel.writeString(image)
     }
 
     override fun describeContents(): Int {

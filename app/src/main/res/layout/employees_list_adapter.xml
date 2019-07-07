@@ -94,6 +94,25 @@
                 app:layout_constraintEnd_toStartOf="@+id/dashboard_next_icon"
                 app:layout_constraintHorizontal_bias="0.0"/>
 
+        <Button
+                android:id="@+id/employee_status_changer_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:fontFamily="@font/font_regular"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:text="@string/change_status"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:paddingLeft="@dimen/margin_fifteen"
+                android:paddingRight="@dimen/margin_fifteen"
+                android:background="@color/dark_gray_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/employee_status"
+                android:layout_marginEnd="@dimen/default_margin"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

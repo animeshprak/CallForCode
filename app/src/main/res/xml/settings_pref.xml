@@ -13,7 +13,7 @@
                 app:iconSpaceReserved="false"/>
 
         <android.support.v7.preference.SwitchPreferenceCompat
-                android:key="key1"
+                android:key="key8"
                 android:title="Allow Notifications After Logout"
                 android:summary="You will receive notification after log out"
                 android:defaultValue="true"

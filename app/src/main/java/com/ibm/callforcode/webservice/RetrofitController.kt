@@ -1,11 +1,11 @@
 package com.sample.webservice
 
 import com.google.gson.GsonBuilder
+import com.ibm.callforcode.webservice.data.Doc
 import com.ibm.callforcode.webservice.data.Employees
+import com.ibm.callforcode.webservice.updatestatus.UpdatedStatusResponse
 import com.sample.utils.AppConstants.Companion.BASE_URL
 import com.sample.utils.getOkHttpClientBuilder
-import okhttp3.Interceptor
-import okhttp3.Response
 import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -40,9 +40,14 @@ class RetrofitController {
             return mRetrofit
         }
 
-        fun getCharactersData(charactersCallBack: Callback<Employees>) {
-            val call = webserviceApi.getCharacters()
-            call.enqueue(charactersCallBack)
+        fun getEmployeesData(employeesCallBack: Callback<Employees>) {
+            val call = webserviceApi.getEmployees()
+            call.enqueue(employeesCallBack)
+        }
+
+        fun setEmployeesStatus(doc: Doc, employeeStatusCallBack: Callback<UpdatedStatusResponse>) {
+            val call = webserviceApi.updateEmployeeStatus(doc.id!!, doc)
+            call.enqueue(employeeStatusCallBack)
         }
     }
 }
