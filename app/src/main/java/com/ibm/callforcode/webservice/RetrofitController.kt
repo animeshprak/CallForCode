@@ -3,6 +3,7 @@ package com.sample.webservice
 import com.google.gson.GsonBuilder
 import com.ibm.callforcode.webservice.data.Doc
 import com.ibm.callforcode.webservice.data.Employees
+import com.ibm.callforcode.webservice.emergency.EmergencyResponse
 import com.ibm.callforcode.webservice.updatestatus.UpdatedStatusResponse
 import com.sample.utils.AppConstants.Companion.BASE_URL
 import com.sample.utils.getOkHttpClientBuilder
@@ -48,6 +49,16 @@ class RetrofitController {
         fun setEmployeesStatus(doc: Doc, employeeStatusCallBack: Callback<UpdatedStatusResponse>) {
             val call = webserviceApi.updateEmployeeStatus(doc.id!!, doc)
             call.enqueue(employeeStatusCallBack)
+        }
+
+        fun getEmergencyStatusData(emergencyCallBack: Callback<EmergencyResponse>) {
+            val call = webserviceApi.getEmergencyStatus()
+            call.enqueue(emergencyCallBack)
+        }
+
+        fun setEmergencyStatusData(doc: EmergencyResponse, emergencyStatusCallBack: Callback<UpdatedStatusResponse>) {
+            val call = webserviceApi.setEmergencyStatus(doc)
+            call.enqueue(emergencyStatusCallBack)
         }
     }
 }
